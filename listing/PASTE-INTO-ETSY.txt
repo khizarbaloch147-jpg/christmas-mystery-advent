@@ -1,0 +1,46 @@
+Paste this into the listing that already has the first photo. Set your own price. Do not publish until the price is the one you want.
+
+Title
+The Case of the Missing Christmas Star, 24 Day Digital Mystery Game, Instant Download
+
+Type
+Digital
+
+Photos still to add
+listing/02-twenty-four-doors.jpg
+listing/05-any-screen.jpg
+
+Digital file the buyer downloads
+The-Case-of-the-Missing-Christmas-Star.zip
+It contains index.html and README.md. Do not put the listing folder in that zip.
+
+Description
+A 24-day Christmas mystery for one player. The star is gone from the Harrington house on the evening of 23 December 2026. Open one door, solve one puzzle, and keep every clue in the notebook. On the last door, name who took the star, why, and where it is hidden.
+
+Advent opens door 1 on 1 December, door 2 on 2 December, and so on. After 24 December every door is open. Before December the doors stay shut. Binge opens the next door as soon as the current puzzle is solved, on any date.
+
+You get one zip. Unzip it and open index.html in a browser. It works offline. There is no account and nothing to install.
+
+Windows: double-click index.html. It opens in Edge, Chrome, or Firefox.
+Mac: double-click index.html. It opens in Safari.
+Android: in Files or Downloads, open index.html with Chrome.
+iPhone or iPad: in the Files app, open index.html in Safari, and come back in that same browser so the clues are kept.
+
+The pictures are drawn in the file. The sound is made by the browser. Progress stays in that browser.
+
+This game was made with AI assistance.
+
+Tags
+christmas mystery
+advent calendar
+digital download
+christmas game
+instant download
+holiday puzzle
+mystery game
+family activity
+christmas eve
+offline game
+browser game
+one player
+no app needed
