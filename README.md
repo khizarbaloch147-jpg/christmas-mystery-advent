@@ -26,6 +26,8 @@ The file is for the person who bought it, to play on their own laptop, tablet, o
 
 Zip `index.html` and this README together, and upload that zip as the digital file. Leave the solution out of the listing, the photos, and the preview.
 
+The shop photos are in the `listing` folder. Each one is 2000 by 2000 pixels, the size Etsy recommends. Upload them in number order and use `01-cover.jpg` as the first image. Leave that folder out of the buyer zip.
+
 Facts worth saying, in your own words:
 
 - The download is instant and works offline.
