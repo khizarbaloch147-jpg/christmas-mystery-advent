@@ -5,7 +5,11 @@ A 24-day Christmas mystery that plays in a browser, with the internet off. The d
 ## For the buyer
 
 1. Unzip the folder.
-2. Double-click `index.html`.
+2. Open `index.html` in a browser.
+   - **Windows laptop or PC.** Double-click the file. It opens in Edge, Chrome, or Firefox.
+   - **Mac.** Double-click the file. It opens in Safari.
+   - **Android.** In Files or Downloads, tap `index.html` and open it with Chrome.
+   - **iPhone or iPad.** In the Files app, tap `index.html` and open it in Safari. Come back in that same browser if you want your clues kept.
 3. Pick a mode.
    - **Advent** opens door 1 on 1 December, door 2 on 2 December, and so on. After 24 December every door is open. Before December the doors stay shut.
    - **Binge** opens the next door as soon as the current puzzle is solved, on any date. Use this to play the whole case in one sitting, or if you start after Christmas.

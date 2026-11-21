@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>The Case of the Missing Christmas Star</title>
 <meta name="description" content="24 days. 24 clues. One Christmas thief. An offline Christmas mystery for one screen.">
 <style>
@@ -23,10 +23,13 @@
     --sans: "Segoe UI", system-ui, sans-serif;
   }
   * { box-sizing: border-box; }
-  html { font-size: 100%; }
+  html { font-size: 100%; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
   body {
     margin: 0;
     min-height: 100vh;
+    min-height: 100dvh;
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
     color: var(--cream);
     background:
       radial-gradient(900px 420px at 12% -10%, rgba(212, 181, 106, 0.16), transparent 55%),
@@ -37,7 +40,7 @@
     line-height: 1.5;
   }
   button, input, select, textarea { font: inherit; color: inherit; }
-  button { cursor: pointer; }
+  button { cursor: pointer; touch-action: manipulation; }
   :focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
   .skip {
     position: absolute;
@@ -116,6 +119,14 @@
   .mode[aria-pressed="true"] { border-color: var(--red); background: #fff7f4; }
   .mode strong { display: block; font-family: var(--serif); font-size: 1.2rem; }
   .progress { margin: 14px 0 0; color: var(--gold); }
+  .save-note {
+    background: #fff7f4;
+    color: var(--ink);
+    border: 1px solid #e7c7c4;
+    border-radius: 12px;
+    padding: 10px 12px;
+    margin: 0 0 12px;
+  }
   .paper .progress { color: var(--red-deep); }
   .paper .ghost, dialog .ghost { color: var(--ink); border-color: #c9bba6; }
   .doors {
@@ -290,6 +301,10 @@
   @media (max-width: 520px) {
     .story { font-size: 1.15rem; }
     .digit { width: 52px; height: 52px; }
+    .wrap { padding: 16px 12px calc(48px + env(safe-area-inset-bottom)); }
+  }
+  @media (max-width: 380px) {
+    .doors { grid-template-columns: repeat(2, 1fr); }
   }
   @media (prefers-reduced-motion: reduce) {
     .nudge { animation: none; }
@@ -647,6 +662,8 @@
   }
 
   var state = load();
+  var saveWarning = "";
+  save();
   var modal = null;
   var session = blankSession(0);
   var audioCtx = null;
@@ -676,7 +693,12 @@
   }
 
   function save() {
-    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (err) { /* private mode */ }
+    try {
+      localStorage.setItem(KEY, JSON.stringify(state));
+      saveWarning = "";
+    } catch (err) {
+      saveWarning = "This browser is not keeping your clues. Finish the case in this tab, or leave private browsing.";
+    }
   }
 
   function norm(s) {
@@ -766,6 +788,7 @@
     if (!state.sound) return;
     try {
       audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === "suspended" && audioCtx.resume) audioCtx.resume();
       var t = audioCtx.currentTime + (when || 0);
       var o = audioCtx.createOscillator();
       var g = audioCtx.createGain();
@@ -887,6 +910,7 @@
     app.replaceChildren();
     var main = h("main", { id: "main", class: "wrap" });
     main.appendChild(header());
+    if (saveWarning) main.appendChild(h("p", { class: "save-note" }, saveWarning));
     if (view.name === "home") main.appendChild(screenHome());
     else if (view.name === "calendar") main.appendChild(screenCalendar());
     else if (view.name === "notebook") main.appendChild(screenNotebook());
