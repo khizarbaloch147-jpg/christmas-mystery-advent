@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Case of the Missing Christmas Star</title>
+<meta name="description" content="24 days. 24 clues. One Christmas thief. An offline Christmas mystery for one screen.">
+<style>
+  :root {
+    --green: #143026;
+    --green-deep: #0c1c16;
+    --pine: #214536;
+    --red: #8d2c38;
+    --red-deep: #6d2029;
+    --gold: #d4b56a;
+    --gold-deep: #a6853e;
+    --cream: #f6f1e6;
+    --cream-dim: #e6dccb;
+    --ink: #241c16;
+    --muted: #5e5348;
+    --line: rgba(36, 28, 22, 0.14);
+    --serif: Palatino, "Palatino Linotype", "Iowan Old Style", Georgia, "Times New Roman", serif;
+    --sans: "Segoe UI", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { font-size: 100%; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    color: var(--cream);
+    background:
+      radial-gradient(900px 420px at 12% -10%, rgba(212, 181, 106, 0.16), transparent 55%),
+      radial-gradient(700px 380px at 110% 0%, rgba(141, 44, 56, 0.2), transparent 50%),
+      var(--green-deep);
+    font-family: var(--sans);
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  :focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+  .skip {
+    position: absolute;
+    left: 12px;
+    top: -40px;
+    background: var(--cream);
+    color: var(--ink);
+    padding: 8px 12px;
+    z-index: 5;
+  }
+  .skip:focus { top: 12px; }
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 20px 16px 64px; }
+  header.bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 14px;
+    margin-bottom: 18px;
+  }
+  header.bar .brand { margin-right: auto; }
+  .brand strong { display: block; font-family: var(--serif); font-size: 1.15rem; font-weight: 600; }
+  .year {
+    margin: 0;
+    color: var(--gold);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-size: 0.82rem;
+  }
+  .bar nav { display: flex; flex-wrap: wrap; gap: 8px; }
+  .ghost, .solid, .choice, .digit, .key, .spot, .card-btn, .door {
+    border: 1px solid transparent;
+    border-radius: 12px;
+    min-height: 44px;
+  }
+  .ghost {
+    background: transparent;
+    color: var(--cream);
+    border-color: rgba(246, 241, 230, 0.35);
+    padding: 8px 12px;
+  }
+  .ghost[aria-pressed="true"], .choice[aria-pressed="true"] {
+    border-color: var(--gold);
+    box-shadow: inset 0 0 0 1px var(--gold);
+  }
+  .solid {
+    background: var(--red);
+    color: var(--cream);
+    padding: 12px 16px;
+    font-weight: 650;
+  }
+  .solid:hover { background: var(--red-deep); }
+  .paper {
+    background: var(--cream);
+    color: var(--ink);
+    border-radius: 18px;
+    padding: 22px 18px;
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.25);
+  }
+  h1, h2, h3 { font-family: var(--serif); font-weight: 600; line-height: 1.2; margin: 0 0 10px; }
+  h1 { font-size: clamp(1.8rem, 4vw, 3rem); }
+  h2 { font-size: clamp(1.4rem, 3vw, 2rem); }
+  .kicker { margin: 0 0 8px; color: var(--gold-deep); letter-spacing: 0.06em; text-transform: uppercase; font-size: 0.82rem; }
+  .story { font-family: var(--serif); font-size: 1.25rem; line-height: 1.45; margin: 0 0 16px; }
+  .lede { font-size: 1.15rem; max-width: 42rem; }
+  .row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 14px; }
+  .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+  .mode {
+    text-align: left;
+    background: #fffdf8;
+    color: var(--ink);
+    border: 2px solid var(--line);
+    border-radius: 14px;
+    padding: 14px;
+    min-height: 44px;
+  }
+  .mode[aria-pressed="true"] { border-color: var(--red); background: #fff7f4; }
+  .mode strong { display: block; font-family: var(--serif); font-size: 1.2rem; }
+  .progress { margin: 14px 0 0; color: var(--gold); }
+  .paper .progress { color: var(--red-deep); }
+  .paper .ghost, dialog .ghost { color: var(--ink); border-color: #c9bba6; }
+  .doors {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 10px;
+  }
+  .door {
+    aspect-ratio: 1;
+    background: linear-gradient(180deg, #2c4a3c, #1a3329);
+    color: var(--gold);
+    border: 1px solid rgba(212, 181, 106, 0.35);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 6px;
+  }
+  .door .num { font-family: var(--serif); font-size: clamp(1.4rem, 3vw, 2rem); }
+  .door .state { font-size: 0.75rem; color: var(--cream); }
+  .door.ready { box-shadow: 0 0 0 2px var(--gold), 0 0 22px rgba(212, 181, 106, 0.45); color: var(--cream); }
+  .door.solved { background: var(--cream); color: var(--ink); }
+  .door.solved .state { color: var(--pine); }
+  .door.locked { opacity: 0.72; }
+  .window-frame {
+    border: 10px solid #6d4c33;
+    border-radius: 18px 18px 8px 8px;
+    padding: 14px;
+    background:
+      linear-gradient(#d7e4ee, #efe6d4 42%, #d9c8a4);
+    margin-bottom: 14px;
+  }
+  .snow {
+    height: 36px;
+    background-image: radial-gradient(circle, #fff 1.2px, transparent 1.4px);
+    background-size: 28px 18px;
+    opacity: 0.8;
+  }
+  .puzzle { margin-top: 8px; }
+  .letters { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px; }
+  .chip {
+    background: #fff;
+    color: var(--ink);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    min-width: 36px;
+    min-height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--serif);
+    font-size: 1.2rem;
+  }
+  label { display: block; margin: 8px 0 4px; font-weight: 650; }
+  input[type="text"], textarea {
+    width: 100%;
+    max-width: 36rem;
+    background: #fff;
+    color: var(--ink);
+    border: 1px solid #c9bba6;
+    border-radius: 10px;
+    padding: 12px;
+    font-size: 1.05rem;
+  }
+  textarea { min-height: 5rem; max-width: 100%; }
+  .choice {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: #fff;
+    color: var(--ink);
+    border: 2px solid var(--line);
+    padding: 12px 14px;
+    margin: 8px 0;
+  }
+  .lockrow, .keys { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0; }
+  .digit {
+    width: 64px;
+    height: 64px;
+    text-align: center;
+    font-size: 1.6rem;
+    background: #fff;
+    color: var(--ink);
+    border: 2px solid #c9bba6;
+    border-radius: 12px;
+  }
+  .key {
+    min-width: 52px;
+    background: #fff;
+    color: var(--ink);
+    border: 1px solid var(--line);
+    padding: 10px 12px;
+  }
+  .card-pool, .slots { display: grid; gap: 8px; margin: 8px 0 12px; }
+  .card-btn {
+    text-align: left;
+    background: #fff;
+    color: var(--ink);
+    border: 2px solid var(--line);
+    padding: 12px;
+  }
+  .card-btn small { display: block; color: var(--muted); }
+  .in-place { border-color: #2f6b4f; }
+  .out { border-color: var(--red); }
+  .scene {
+    position: relative;
+    width: min(100%, 680px);
+    margin: 8px auto 12px;
+    border-radius: 16px;
+    overflow: hidden;
+    background: #d5e2ea;
+  }
+  .scene svg { width: 100%; height: auto; display: block; }
+  .spot {
+    position: absolute;
+    min-width: 48px;
+    min-height: 48px;
+    transform: translate(-50%, -50%);
+    background: rgba(255, 253, 248, 0.88);
+    color: var(--ink);
+    border: 2px solid #6d4c33;
+    border-radius: 999px;
+    padding: 8px 10px;
+    font-size: 0.85rem;
+  }
+  .spot.glow { box-shadow: 0 0 0 4px var(--gold), 0 0 18px var(--gold); }
+  .msg { min-height: 1.4em; font-weight: 650; }
+  .msg.bad { color: var(--red-deep); }
+  .msg.good { color: #21543c; }
+  .stamp {
+    display: inline-block;
+    border: 3px solid var(--red);
+    color: var(--red);
+    font-family: var(--serif);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 4px 8px;
+    transform: rotate(-6deg);
+    margin-bottom: 8px;
+  }
+  .tabs { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .suspect, .clue, .when {
+    background: #fffdf8;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px;
+    margin: 8px 0;
+  }
+  .suspect h3 { margin-bottom: 4px; }
+  .muted { color: var(--muted); }
+  dialog {
+    border: none;
+    border-radius: 16px;
+    padding: 0;
+    max-width: 28rem;
+    width: calc(100% - 24px);
+    color: var(--ink);
+    background: var(--cream);
+  }
+  dialog::backdrop { background: rgba(8, 16, 12, 0.62); }
+  dialog .inner { padding: 18px; }
+  .nudge { animation: nudge 0.28s ease; }
+  @keyframes nudge {
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+  @media (max-width: 800px) {
+    .doors { grid-template-columns: repeat(4, 1fr); }
+    .modes { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 520px) {
+    .story { font-size: 1.15rem; }
+    .digit { width: 52px; height: 52px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .nudge { animation: none; }
+    .snow { display: none; }
+  }
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<div id="testlog" hidden></div>
+<div id="app"></div>
+<script>
+(function () {
+  "use strict";
+
+  var KEY = "missing-christmas-star-v1";
+  var SUSPECTS = [
+    { id: "margaret", name: "Margaret Harrington", age: 68, role: "Edwin's sister" },
+    { id: "bernard", name: "Bernard Harrington", age: 45, role: "Edwin's son" },
+    { id: "felix", name: "Felix Harrington", age: 19, role: "Edwin's grandson" },
+    { id: "rose", name: "Rose Harrington", age: 70, role: "Edwin's wife" },
+    { id: "clara", name: "Clara", age: 52, role: "Housekeeper of thirty years" }
+  ];
+
+  var DAYS = [
+    {
+      n: 1, type: "scramble", title: "The party begins",
+      story: "The Harrington house is already full of music, pine, and the clink of cups. Christmas Eve is tomorrow, but tonight the family trims the tree. Edwin Harrington is about to bring out the gold treasure that has crowned that tree for fifty years. Unscramble the letters to name it.",
+      hint: "The first letter is S.",
+      puzzle: { letters: ["R", "A", "T", "S"], answer: "star" },
+      evidence: "The Star of Bethlehem is gold. It has topped the family tree for fifty years.",
+      notes: {}
+    },
+    {
+      n: 2, type: "timeline", title: "The star is gone",
+      story: "At nine o'clock Edwin unlocks the study for the tree-top moment. The velvet case is open and empty. The door had been locked, and the window is still latched from the inside. He showed the star at seven, locked it away at half past seven, and Felix's magic show began at eight. Put the four events in that order.",
+      hint: "Begin with the moment Edwin first shows the star.",
+      puzzle: {
+        cards: [
+          { id: "a", text: "The case is found empty" },
+          { id: "b", text: "Edwin shows the star to everyone" },
+          { id: "c", text: "Felix's magic show begins" },
+          { id: "d", text: "Edwin locks the star in its case" }
+        ],
+        answer: ["b", "d", "c", "a"]
+      },
+      evidence: "Evening timeline: 7:00 the star is shown, 7:30 it is locked away, 8:00 the magic show begins, 9:00 the case is found empty.",
+      notes: {
+        timeline: [
+          { sort: 700, when: "7:00 pm", text: "Edwin shows the star to everyone." },
+          { sort: 730, when: "7:30 pm", text: "Edwin locks the star in its velvet case." },
+          { sort: 800, when: "8:00 pm", text: "Felix's magic show begins." },
+          { sort: 900, when: "9:00 pm", text: "The case is found empty. The door was locked. The window was latched from inside." }
+        ]
+      }
+    },
+    {
+      n: 3, type: "logic", title: "Meet the suspects",
+      story: "Five people were in the house besides Edwin. One of them took the star. Clara the housekeeper has a study key, and she used it at nine this morning. Edwin holds the other key. Who had a key to the study?",
+      hint: "Edwin holds one key. Who used the other one this morning?",
+      puzzle: {
+        options: [
+          { id: "clara", text: "Clara the housekeeper" },
+          { id: "felix", text: "Felix" },
+          { id: "margaret", text: "Margaret" }
+        ],
+        answer: "clara"
+      },
+      evidence: "Suspects: Margaret, Bernard, Felix, Rose, and Clara. Clara used her study key at 9:00 in the morning. Edwin holds the other key.",
+      notes: {
+        intro: ["margaret", "bernard", "felix", "rose", "clara"],
+        fields: {
+          clara: { note: "She has a study key. She used it at 9:00 in the morning, and not again that day." }
+        }
+      }
+    },
+    {
+      n: 4, type: "cipher", title: "A note in the fireplace",
+      story: "A half-burnt note lies in the fireplace, written in a careful hand. Someone tried to destroy it. Every letter has been shifted along the alphabet. Turn the wheel back until the words are plain, then enter that message.",
+      hint: "Turn the wheel back by three places.",
+      puzzle: { kind: "caesar", cipher: "WKH VWDU EHORQJV LQ D PXVHXP", shift: 3, answer: "the star belongs in a museum" },
+      evidence: "A note in Margaret's handwriting says the star belongs in a museum.",
+      notes: {
+        fields: {
+          margaret: {
+            motive: "She believes the star belongs in a museum, not on a tree.",
+            secret: "A note in her handwriting says the star belongs in a museum."
+          }
+        }
+      }
+    },
+    {
+      n: 5, type: "lock", title: "The argument",
+      story: "Earlier that evening Bernard argued with Edwin about money. Edwin's desk drawer is locked. Its code is the year the star first topped the tree. The star has stood there for fifty years, and this story is set at Christmas 2026.",
+      hint: "Christmas 2026, minus fifty years.",
+      puzzle: { code: "1976" },
+      evidence: "Bernard argued with Edwin about money. Bernard owes money.",
+      notes: { fields: { bernard: { motive: "He owes money." } } }
+    },
+    {
+      n: 6, type: "scramble", title: "The lock picks",
+      story: "In the hallway, half hidden under a coat, you find a small leather case. Inside is a set of lock picks belonging to Felix, the family's amateur magician. A label on the case has been scrambled. Unscramble it.",
+      hint: "The first letter is P.",
+      puzzle: { letters: ["K", "C", "O", "L", "K", "C", "I", "P"], answer: "picklock" },
+      evidence: "Felix's lock-pick set was found in the hallway.",
+      notes: { fields: { felix: { secret: "His lock picks were found in the hallway." } } }
+    },
+    {
+      n: 7, type: "logic", title: "Who had keys?",
+      story: "Clara's key turned in the study at nine in the morning, and not after that. Edwin locked the room at half past seven in the evening. The lock was not broken open. Who could have opened the study between half past seven and nine?",
+      hint: "A key was not used this evening, and the lock was not forced.",
+      puzzle: {
+        options: [
+          { id: "clara", text: "Clara, with her key — but she was in the kitchen" },
+          { id: "picked", text: "Someone who picked the lock" },
+          { id: "edwin", text: "Edwin, who already had the star" }
+        ],
+        answer: "picked"
+      },
+      evidence: "The study was opened by someone without a key.",
+      notes: {
+        timeline: [{ sort: 830, when: "7:30–9:00 pm", text: "The study was opened without a key. The lock was not forced." }]
+      }
+    },
+    {
+      n: 8, type: "cipher", title: "Rose's old letter",
+      story: "In Rose's writing desk you find an old letter. It uses a code in which A means Z and Z means A, and every other letter swaps with its opposite in the same way. She was hiding a worry, not a plan to steal. Read the letter with the alphabet beside it.",
+      hint: "A stands opposite Z. B stands opposite Y. Work each letter across.",
+      puzzle: { kind: "atbash", cipher: "SV LDVH NLMVB", answer: "he owes money" },
+      evidence: "Rose knew about Bernard's debts. She was helping him, not stealing.",
+      notes: { fields: { rose: { secret: "She knew Bernard was in debt, and she was helping him." } } }
+    },
+    {
+      n: 9, type: "hidden", title: "The footprint",
+      story: "Outside the study window the garden mud holds a single footprint. The window is latched from the inside, so nobody climbed through. Someone still walked here. Find the footprint.",
+      hint: "Look beside the study window, low in the mud.",
+      puzzle: { target: "print" },
+      evidence: "A muddy footprint by the study window. A man's boot, size 10.",
+      notes: { timeline: [{ sort: 840, when: "That night", text: "A size-10 boot print was left in the mud by the study window." }] }
+    },
+    {
+      n: 10, type: "lock", title: "The pawnbroker's card",
+      story: "In the cloakroom a pawnbroker's card is tucked into a coat. The coat is marked with the letter B. The ticket number is printed on the card. Enter those four digits.",
+      hint: "Read the ticket number printed on the card.",
+      puzzle: { code: "2412", showCard: true },
+      evidence: "A pawnbroker's card was in a coat marked B. Someone at this party was pawning things.",
+      notes: {}
+    },
+    {
+      n: 11, type: "timeline", title: "Felix's magic show",
+      story: "Felix's show was in the drawing room during the half hour the star was taken. His program card lists the acts from first to last: the card trick, the coin trick, the disappearing scarf, and the grand finale. The cards below are shuffled. Put them back as the program lists them.",
+      hint: "Follow the program card from the top: the card trick comes first.",
+      puzzle: {
+        cards: [
+          { id: "a", text: "The disappearing scarf" },
+          { id: "b", text: "The card trick" },
+          { id: "c", text: "The grand finale" },
+          { id: "d", text: "The coin trick" }
+        ],
+        answer: ["b", "d", "a", "c"]
+      },
+      evidence: "Felix performed in front of everyone from 8:00 to 8:30 pm. He could not have been at the study.",
+      notes: {
+        fields: {
+          felix: {
+            motive: "None. He loves the family tradition.",
+            alibi: "Performing magic in front of everyone from 8:00 to 8:30 pm."
+          }
+        },
+        timeline: [{ sort: 810, when: "8:00–8:30 pm", text: "Felix is in the drawing room, performing for everyone." }]
+      }
+    },
+    {
+      n: 12, type: "logic", title: "The kitchen alibi",
+      story: "Margaret and Clara were in the kitchen together, getting supper ready. They tell the same story about the same room and the same half hour. Who was in the kitchen from 8:15 to 8:45?",
+      hint: "Two people told the same story about supper.",
+      puzzle: {
+        options: [
+          { id: "kitchen", text: "Margaret and Clara" },
+          { id: "sons", text: "Bernard and Felix" },
+          { id: "elders", text: "Rose and Edwin" }
+        ],
+        answer: "kitchen"
+      },
+      evidence: "Margaret and Clara were together in the kitchen. Both are clear for the time of the theft.",
+      notes: {
+        fields: {
+          margaret: { alibi: "In the kitchen with Clara from 8:15 to 8:45 pm." },
+          clara: { alibi: "In the kitchen with Margaret from 8:15 to 8:45 pm." }
+        },
+        timeline: [{ sort: 825, when: "8:15–8:45 pm", text: "Margaret and Clara are together in the kitchen." }]
+      }
+    },
+    {
+      n: 13, type: "hidden", title: "The scratched lock",
+      story: "You look at the velvet case through a glass. The lock has its own story, if you can see the marks left in the metal. Find the scratches.",
+      hint: "The pale lines are on the lock itself, not on the ribbon.",
+      puzzle: { target: "scratches" },
+      evidence: "The lock was picked, not forced. Someone used picks, or borrowed them.",
+      notes: { timeline: [{ sort: 835, when: "On the case", text: "Scratch marks show the lock was picked, not forced." }] }
+    },
+    {
+      n: 14, type: "cipher", title: "Edwin's desk note",
+      story: "A false panel in Edwin's desk hides a note in his own hand. It uses the same shifted letters as the note from the fireplace. Turn the wheel back by three again, and enter the message.",
+      hint: "Use the same three-turn wheel as the fireplace note.",
+      puzzle: { kind: "caesar", cipher: "ORRN XQGHU WKH WUHH", shift: 3, answer: "look under the tree" },
+      evidence: "Edwin's note says: look under the tree.",
+      notes: { timeline: [{ sort: 905, when: "A note", text: "Edwin wrote: look under the tree." }] }
+    },
+    {
+      n: 15, type: "scramble", title: "Under the tree",
+      story: "Under the Christmas tree, among the wrapped presents, one box looks wrong. It is taped shut, it is heavy, and it has no name. Letters stuck to the tape have been scrambled. Unscramble what the box is.",
+      hint: "The first letter is G.",
+      puzzle: { letters: ["T", "F", "I", "G", "X", "O", "B"], answer: "gift box", also: ["giftbox"] },
+      evidence: "A taped-shut gift box under the tree is heavier than it should be.",
+      notes: { timeline: [{ sort: 860, when: "Under the tree", text: "A heavy gift box is taped shut and has no name tag." }] }
+    },
+    {
+      n: 16, type: "lock", title: "Open the gift box",
+      story: "The odd gift box has a small combination lock. The code is not written anywhere. It is two numbers you already know, set side by side: how many doors are on this calendar, then how many suspects are in the house.",
+      hint: "Write the number of doors, then the number of suspects.",
+      puzzle: { code: "2405" },
+      evidence: "A note inside the gift box reads “Merry Christmas — B”.",
+      notes: { timeline: [{ sort: 870, when: "Inside the box", text: "The gift box holds wrapping paper and a note signed B." }] }
+    },
+    {
+      n: 17, type: "logic", title: "Who is B?",
+      story: "The note in the box is signed with a single letter. Five people are in this case. Whose name begins with B?",
+      hint: "Say each name and listen for the first letter.",
+      puzzle: {
+        options: [
+          { id: "bernard", text: "Bernard" },
+          { id: "margaret", text: "Margaret" },
+          { id: "felix", text: "Felix" },
+          { id: "rose", text: "Rose" },
+          { id: "clara", text: "Clara" }
+        ],
+        answer: "bernard"
+      },
+      evidence: "Only one suspect's name begins with B: Bernard.",
+      notes: { fields: { bernard: { note: "The coat marked B, and the note signed B, are his." } } }
+    },
+    {
+      n: 18, type: "hidden", title: "The muddy boots",
+      story: "Five pairs of boots stand in the boot room. One pair has been through the garden mud and matches the size already in your notebook. Find that pair.",
+      hint: "The notebook's footprint is a man's boot, size 10.",
+      puzzle: { target: "ten" },
+      evidence: "Bernard's boots are muddy and size 10. They match the footprint by the study window.",
+      notes: { fields: { bernard: { note: "His size-10 boots are muddy and match the print by the study window." } } }
+    },
+    {
+      n: 19, type: "cipher", title: "The pawn receipt",
+      story: "Folded inside Bernard's coat is a pawn receipt, written in the same reversed alphabet as Rose's letter. Read every letter with that alphabet.",
+      hint: "Use the same reversed alphabet as Rose's letter. A is Z.",
+      puzzle: { kind: "atbash", cipher: "TLOW DZGXS HLOW", answer: "gold watch sold" },
+      evidence: "Bernard pawned his gold watch. The debts are real, and he was running out of things to sell.",
+      notes: {
+        fields: {
+          bernard: {
+            motive: "He owes money, and he has been pawning what he owns.",
+            secret: "A pawn receipt in his coat shows his gold watch was sold."
+          }
+        }
+      }
+    },
+    {
+      n: 20, type: "timeline", title: "Rose confesses",
+      story: "Rose sits you down and tells the truth in the order it happened. Bernard borrowed money first. She gave him money in the summer. He pawned his gold watch after that. Only then did the star vanish. She was protecting him, not stealing. Put her account in order.",
+      hint: "The debts started with a loan, long before tonight.",
+      puzzle: {
+        cards: [
+          { id: "a", text: "Bernard pawns his gold watch" },
+          { id: "b", text: "Bernard borrows money" },
+          { id: "c", text: "The star vanishes" },
+          { id: "d", text: "Rose gives Bernard money" }
+        ],
+        answer: ["b", "d", "a", "c"]
+      },
+      evidence: "Bernard's debts go back months. Rose was protecting him, not stealing.",
+      notes: {
+        fields: {
+          rose: {
+            motive: "None. She loves the star.",
+            alibi: "In the drawing room all evening.",
+            secret: "She knew about the debts and gave Bernard money. She was protecting him, not stealing."
+          }
+        }
+      }
+    },
+    {
+      n: 21, type: "logic", title: "Clara's testimony",
+      story: "Clara speaks at last. At 8:20 she saw Bernard beside the study door with something under his coat. She waited because she did not want to believe it. Who is the only person with no alibi from 8:15 to 8:30?",
+      hint: "Cross off everyone who was seen in a room.",
+      puzzle: {
+        options: [
+          { id: "bernard", text: "Bernard" },
+          { id: "felix", text: "Felix" },
+          { id: "margaret", text: "Margaret" },
+          { id: "rose", text: "Rose" },
+          { id: "clara", text: "Clara" }
+        ],
+        answer: "bernard"
+      },
+      evidence: "Bernard is the only one with no alibi for 8:15–8:30 pm. Clara saw him by the study at 8:20 pm.",
+      notes: {
+        fields: {
+          bernard: { alibi: "None for 8:15–8:30 pm. He said he was on a call in the garden. Clara saw him by the study at 8:20 pm." },
+          clara: { secret: "She is the witness. At 8:20 pm she saw Bernard by the study with something under his coat." }
+        },
+        timeline: [{ sort: 820, when: "8:20 pm", text: "Clara sees Bernard by the study door, with something under his coat." }]
+      }
+    },
+    {
+      n: 22, type: "scramble", title: "The borrowed picks",
+      story: "Felix checks his coat. The picks were missing from eight until nine, then they were back in the case, exactly where he keeps them. He did not take them out. Unscramble what happened to them.",
+      hint: "The first letter is B.",
+      puzzle: { letters: ["D", "E", "W", "O", "R", "B", "O", "R"], answer: "borrowed" },
+      evidence: "Felix's picks were borrowed that evening. Someone else used them.",
+      notes: { fields: { felix: { secret: "His picks were missing from 8:00 to 9:00 pm, then returned. Someone borrowed them." } } }
+    },
+    {
+      n: 23, type: "timeline", title: "The crime, step by step",
+      story: "You have every piece. Lay the crime out from the first move to the last. The picks leave Felix's coat before the lock is touched. A pine needle from the gift-box tape is caught on Margaret's glove, so the glove was handled after the box was sealed. Clara is sure the glove was not by the study when she passed at 8:20. The empty case is discovered at nine.",
+      hint: "The picks are taken before the lock is touched. The empty case is last.",
+      puzzle: {
+        cards: [
+          { id: "a", text: "The star is hidden in the gift box" },
+          { id: "b", text: "The picks are borrowed" },
+          { id: "c", text: "The case is found empty at 9:00 pm" },
+          { id: "d", text: "The study lock is picked" },
+          { id: "e", text: "Margaret's glove is planted by the study" }
+        ],
+        answer: ["b", "d", "a", "e", "c"]
+      },
+      evidence: "The chain: borrowed picks, picked lock, star hidden in the gift box, glove planted, empty case at nine.",
+      notes: {
+        fields: {
+          margaret: { note: "Her glove was left by the study. It was planted after the gift box was sealed. It is not proof she took the star." }
+        },
+        timeline: [{ sort: 880, when: "Before 9:00 pm", text: "Order of the crime: picks borrowed, lock picked, star hidden in the gift box, glove planted, then the empty case at nine." }]
+      }
+    },
+    {
+      n: 24, type: "final", title: "The accusation",
+      story: "Christmas Eve. The family is around the tree, and the room is waiting. Three answers will settle the case. Name who took the star, why they took it, and where it is hidden.",
+      hint: "The notebook already holds the name, the reason, and the place. The only person without an alibi signed the note in the box.",
+      puzzle: {},
+      evidence: "Bernard took the star because of his debts and hid it in the gift box under the tree.",
+      notes: {}
+    }
+  ];
+
+  function defaultState() {
+    return { v: 1, mode: "advent", sound: true, solved: {}, hints: {}, startedAt: null, finishedAt: null };
+  }
+
+  var state = load();
+  var modal = null;
+  var session = blankSession(0);
+  var audioCtx = null;
+
+  function blankSession(n) {
+    return {
+      n: n, typed: "", digits: ["", "", "", ""], shift: 0, picked: null,
+      placed: [], marks: null, message: "", tone: "", glow: false, timer: 0,
+      who: "", why: "", where: ""
+    };
+  }
+
+  function load() {
+    try {
+      var raw = localStorage.getItem(KEY);
+      if (!raw) return defaultState();
+      var data = JSON.parse(raw);
+      if (!data || data.v !== 1) return defaultState();
+      data.solved = data.solved || {};
+      data.hints = data.hints || {};
+      if (data.mode !== "binge") data.mode = "advent";
+      data.sound = data.sound !== false;
+      return data;
+    } catch (err) {
+      return defaultState();
+    }
+  }
+
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (err) { /* private mode */ }
+  }
+
+  function norm(s) {
+    return String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim().replace(/\s+/g, " ");
+  }
+  function compact(s) {
+    return String(s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  }
+  function sameText(input, answer, also) {
+    var n = norm(input);
+    var c = compact(input);
+    if (!n) return false;
+    var list = [answer].concat(also || []);
+    for (var i = 0; i < list.length; i++) {
+      if (n === norm(list[i]) || c === compact(list[i])) return true;
+    }
+    return false;
+  }
+  function caesarDecode(text, shift) {
+    return String(text).replace(/[A-Za-z]/g, function (ch) {
+      var up = ch.toUpperCase().charCodeAt(0) - 65;
+      return String.fromCharCode(((up - shift + 26) % 26) + 65);
+    });
+  }
+  function atbash(text) {
+    return String(text).replace(/[A-Za-z]/g, function (ch) {
+      var up = ch.toUpperCase().charCodeAt(0) - 65;
+      return String.fromCharCode(65 + (25 - up));
+    });
+  }
+  function dayBy(n) {
+    for (var i = 0; i < DAYS.length; i++) if (DAYS[i].n === n) return DAYS[i];
+    return null;
+  }
+  function solvedCount() {
+    return Object.keys(state.solved).length;
+  }
+  function highestSolved() {
+    var nums = Object.keys(state.solved).map(Number);
+    return nums.length ? Math.max.apply(null, nums) : 0;
+  }
+  function bingeLimit() {
+    return Math.max(1, highestSolved() + 1);
+  }
+  function dateAllows(n, date) {
+    if (date.getMonth() !== 11) return false;
+    var day = date.getDate();
+    if (day > 24) return true;
+    return day >= n;
+  }
+  function isUnlocked(n, date) {
+    if (state.solved[String(n)]) return true;
+    if (state.mode === "binge") return n <= bingeLimit();
+    return dateAllows(n, date || new Date());
+  }
+  function currentDoor(date) {
+    date = date || new Date();
+    for (var n = 1; n <= 24; n++) {
+      if (!state.solved[String(n)] && isUnlocked(n, date)) return n;
+    }
+    return solvedCount() === 24 ? 24 : 0;
+  }
+  function monthName(n) {
+    return n + " December";
+  }
+
+  function h(tag, attrs, kids) {
+    var node = document.createElement(tag);
+    var a = attrs || {};
+    Object.keys(a).forEach(function (k) {
+      var v = a[k];
+      if (v == null || v === false) return;
+      if (k === "class") node.className = v;
+      else if (k === "html") node.innerHTML = v;
+      else if (k.indexOf("on") === 0 && typeof v === "function") node.addEventListener(k.slice(2), v);
+      else node.setAttribute(k, v === true ? "" : String(v));
+    });
+    var list = [].concat(kids || []);
+    list.forEach(function (kid) {
+      if (kid == null || kid === false) return;
+      node.appendChild(kid instanceof Node ? kid : document.createTextNode(String(kid)));
+    });
+    return node;
+  }
+
+  function tone(freq, dur, when, gain) {
+    if (!state.sound) return;
+    try {
+      audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+      var t = audioCtx.currentTime + (when || 0);
+      var o = audioCtx.createOscillator();
+      var g = audioCtx.createGain();
+      o.type = "sine";
+      o.frequency.value = freq;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(gain || 0.05, t + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(g);
+      g.connect(audioCtx.destination);
+      o.start(t);
+      o.stop(t + dur + 0.02);
+    } catch (err) { /* autoplay or missing audio */ }
+  }
+  function chimeOk() { tone(523, 0.16, 0, 0.05); tone(659, 0.2, 0.09, 0.05); tone(784, 0.26, 0.18, 0.04); }
+  function chimeBad() { tone(180, 0.14, 0, 0.04); }
+  function chimeWin() { tone(523, 0.18, 0, 0.05); tone(659, 0.18, 0.12, 0.05); tone(784, 0.22, 0.24, 0.05); tone(1047, 0.36, 0.36, 0.04); }
+
+  function markHint(n) {
+    var k = String(n);
+    if (!state.hints[k]) {
+      state.hints[k] = true;
+      save();
+    }
+  }
+  function solve(n) {
+    var k = String(n);
+    if (!state.solved[k]) {
+      if (!state.startedAt) state.startedAt = new Date().toISOString();
+      state.solved[k] = { at: new Date().toISOString() };
+      if (n === 24) state.finishedAt = new Date().toISOString();
+      save();
+    }
+  }
+  function localDate(iso) {
+    var d = new Date(iso);
+    return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  }
+  function daysTaken() {
+    if (!state.startedAt || !state.finishedAt) return solvedCount() ? 1 : 0;
+    var a = localDate(state.startedAt);
+    var b = localDate(state.finishedAt);
+    return Math.round((b - a) / 86400000) + 1;
+  }
+
+  function collected() {
+    var intro = {};
+    var fields = {};
+    SUSPECTS.forEach(function (s) {
+      fields[s.id] = { motive: [], alibi: [], secret: [], note: [] };
+    });
+    var timeline = [];
+    var evidence = [];
+    DAYS.forEach(function (day) {
+      if (!state.solved[String(day.n)]) return;
+      evidence.push({ n: day.n, title: day.title, text: day.evidence });
+      var notes = day.notes || {};
+      (notes.intro || []).forEach(function (id) { intro[id] = true; });
+      var patch = notes.fields || {};
+      Object.keys(patch).forEach(function (id) {
+        ["motive", "alibi", "secret", "note"].forEach(function (key) {
+          if (patch[id][key]) fields[id][key].push(patch[id][key]);
+        });
+      });
+      (notes.timeline || []).forEach(function (item) { timeline.push(item); });
+    });
+    timeline.sort(function (a, b) { return a.sort - b.sort; });
+    return { intro: intro, fields: fields, timeline: timeline, evidence: evidence };
+  }
+
+  function grade(day, input) {
+    var p = day.puzzle;
+    if (day.type === "scramble" || day.type === "cipher") return sameText(input, p.answer, p.also);
+    if (day.type === "lock") return String(input) === p.code;
+    if (day.type === "logic") return input === p.answer;
+    if (day.type === "hidden") return input === p.target;
+    if (day.type === "timeline") return Array.isArray(input) && input.join(",") === p.answer.join(",");
+    return false;
+  }
+
+  function header() {
+    return h("header", { class: "bar" }, [
+      h("div", { class: "brand" }, [
+        h("strong", {}, "The Case of the Missing Christmas Star"),
+        h("p", { class: "year" }, "Christmas 2026")
+      ]),
+      h("nav", { "aria-label": "Game" }, [
+        h("button", { class: "ghost", type: "button", onclick: function () { go("home"); } }, "Home"),
+        h("button", { class: "ghost", type: "button", onclick: function () { go("calendar"); } }, "Calendar"),
+        h("button", { class: "ghost", type: "button", onclick: function () { go("notebook"); } }, "Notebook"),
+        h("button", { class: "ghost", type: "button", onclick: openSettings }, "Settings")
+      ])
+    ]);
+  }
+
+  function openSettings() { modal = "settings"; render(); }
+  function askReset() { modal = "reset"; render(); }
+
+  function go(name, n) {
+    if (session.timer) { clearTimeout(session.timer); session.timer = 0; }
+    modal = null;
+    var hash = name === "day" ? "#day/" + n : "#" + name;
+    if (location.hash !== hash) location.hash = hash;
+    else render();
+  }
+
+  function viewFromHash() {
+    var raw = (location.hash || "#home").replace(/^#/, "");
+    if (raw === "selftest") return { name: "home" };
+    var bits = raw.split("/");
+    if (bits[0] === "day") return { name: "day", n: Number(bits[1]) };
+    if (bits[0] === "calendar" || bits[0] === "notebook" || bits[0] === "solved") return { name: bits[0] };
+    return { name: "home" };
+  }
+
+  function render() {
+    var view = viewFromHash();
+    var app = document.getElementById("app");
+    app.replaceChildren();
+    var main = h("main", { id: "main", class: "wrap" });
+    main.appendChild(header());
+    if (view.name === "home") main.appendChild(screenHome());
+    else if (view.name === "calendar") main.appendChild(screenCalendar());
+    else if (view.name === "notebook") main.appendChild(screenNotebook());
+    else if (view.name === "solved") main.appendChild(screenSolved());
+    else if (view.name === "day") main.appendChild(screenDay(view.n));
+    app.appendChild(main);
+    if (modal) {
+      var dlg = screenModal();
+      app.appendChild(dlg);
+      try { dlg.showModal(); } catch (err) { dlg.setAttribute("open", ""); }
+    }
+    var focus = main.querySelector("[data-autofocus]") || main.querySelector("h1");
+    if (focus && focus.focus) focus.focus();
+  }
+
+  function screenHome() {
+    var now = new Date();
+    var before = now.getMonth() !== 11;
+    var box = h("section", { class: "paper" });
+    box.appendChild(h("p", { class: "kicker" }, "A 24-day mystery"));
+    box.appendChild(h("h1", {}, "The Case of the Missing Christmas Star"));
+    box.appendChild(h("p", { class: "lede" }, "24 days. 24 clues. One Christmas thief."));
+    box.appendChild(h("p", { class: "story" }, "Open one door, solve one puzzle, and keep every clue in the notebook. On the last door, name who took the star, why, and where it is hidden."));
+    box.appendChild(h("p", {}, "This is Christmas 2026. The star first topped the Harrington tree fifty years ago."));
+    if (before && state.mode === "advent") {
+      box.appendChild(h("p", {}, "It is not December yet. Advent doors stay shut until their December dates. Binge mode plays the whole case today."));
+    }
+    if (now.getMonth() === 11 && now.getDate() > 24) {
+      box.appendChild(h("p", {}, "December 24 has passed. In Advent mode every door is open."));
+    }
+    var modes = h("div", { class: "modes", role: "group", "aria-label": "Play mode" });
+    modes.appendChild(modeButton("advent", "Advent", "Door 1 opens on 1 December, door 2 on 2 December, and so on."));
+    modes.appendChild(modeButton("binge", "Binge", "The next door opens as soon as you solve the one you are on. No dates."));
+    box.appendChild(modes);
+    box.appendChild(h("p", { class: "progress" }, progressLine()));
+    var row = h("div", { class: "row" });
+    if (solvedCount() || state.finishedAt) {
+      row.appendChild(h("button", { class: "solid", type: "button", onclick: continueCase }, state.finishedAt ? "Read the ending" : "Continue"));
+    }
+    row.appendChild(h("button", { class: "solid", type: "button", onclick: function () { go("calendar"); } }, "Open the calendar"));
+    row.appendChild(h("button", { class: "ghost", type: "button", style: "color:#241c16;border-color:#c9bba6", onclick: function () { go("notebook"); } }, "Notebook"));
+    box.appendChild(row);
+    return box;
+  }
+
+  function modeButton(id, title, text) {
+    return h("button", {
+      class: "mode", type: "button", "aria-pressed": state.mode === id ? "true" : "false",
+      onclick: function () { state.mode = id; save(); render(); }
+    }, [h("strong", {}, title), text]);
+  }
+
+  function continueCase() {
+    if (state.finishedAt) { go("solved"); return; }
+    var n = currentDoor(new Date());
+    if (n) go("day", n);
+    else go("calendar");
+  }
+
+  function progressLine() {
+    var n = currentDoor(new Date());
+    var door = n || Math.min(24, Math.max(1, highestSolved()));
+    return "Door " + door + " of 24 — " + solvedCount() + (solvedCount() === 1 ? " clue found" : " clues found");
+  }
+
+  function screenCalendar() {
+    var now = new Date();
+    var box = h("section", {});
+    var frame = h("div", { class: "window-frame", "aria-hidden": "true" });
+    frame.appendChild(h("div", { class: "snow" }));
+    frame.appendChild(h("p", { style: "margin:8px 0 0;color:#241c16;font-family:Palatino,Georgia,serif;font-size:1.4rem" }, "The Harrington house"));
+    box.appendChild(frame);
+    box.appendChild(h("h1", {}, "Twenty-four doors"));
+    box.appendChild(h("p", { class: "progress" }, progressLine()));
+    if (state.mode === "advent" && now.getMonth() !== 11) {
+      box.appendChild(h("p", {}, "Advent mode is waiting for December. Switch to Binge on the home screen to play today."));
+    }
+    var grid = h("div", { class: "doors" });
+    var current = currentDoor(now);
+    for (var n = 1; n <= 24; n++) grid.appendChild(doorButton(n, now, current));
+    box.appendChild(grid);
+    return box;
+  }
+
+  function doorButton(n, now, current) {
+    var open = isUnlocked(n, now);
+    var solved = !!state.solved[String(n)];
+    var cls = "door" + (solved ? " solved" : open ? " ready" : " locked");
+    if (!solved && open && n === current) cls += " ready";
+    var stateText = solved ? "Solved" : open ? "Open" : "Locked";
+    var extra = "";
+    var ariaExtra = "";
+    if (!open) {
+      if (state.mode === "binge") ariaExtra = "Solve the open door first";
+      else { extra = n + " Dec"; ariaExtra = "Opens " + monthName(n); }
+    }
+    return h("button", {
+      class: cls, type: "button",
+      "aria-label": "Door " + n + ", " + stateText + (ariaExtra ? ", " + ariaExtra : ""),
+      onclick: function () { go("day", n); }
+    }, [
+      h("span", { class: "num" }, String(n)),
+      h("span", { class: "state" }, solved ? "Solved" : open ? "Open" : "Locked"),
+      extra ? h("span", { class: "state" }, extra) : null
+    ]);
+  }
+
+  function screenDay(n) {
+    var day = dayBy(n);
+    var box = h("article", { class: "paper" });
+    if (!day) {
+      box.appendChild(h("h1", {}, "That door is not on this calendar"));
+      box.appendChild(h("button", { class: "solid", type: "button", onclick: function () { go("calendar"); } }, "Back to the calendar"));
+      return box;
+    }
+    var open = isUnlocked(n, new Date());
+    box.appendChild(h("p", { class: "kicker" }, "Door " + n + " of 24"));
+    if (!open) {
+      box.appendChild(h("h1", {}, "This door is shut"));
+      var why = state.mode === "binge"
+        ? "Solve the open door first. The next one unlocks when that puzzle is done."
+        : "This door opens on " + monthName(n) + ". Binge mode on the home screen plays ahead of the dates.";
+      box.appendChild(h("p", { class: "story" }, why));
+      box.appendChild(h("button", { class: "solid", type: "button", onclick: function () { go("calendar"); } }, "Back to the calendar"));
+      return box;
+    }
+    box.appendChild(h("h1", {}, day.title));
+    if (session.n !== n) session = blankSession(n);
+    box.appendChild(h("p", { class: "story" }, day.story));
+    if (state.solved[String(n)]) {
+      var fresh = !!session.just;
+      session.just = false;
+      box.appendChild(foundBlock(day, fresh));
+      return box;
+    }
+    box.appendChild(puzzleBlock(day));
+    return box;
+  }
+
+  function foundBlock(day, justNow) {
+    var wrap = h("div", {});
+    if (justNow) wrap.appendChild(h("p", { class: "stamp" }, "Clue found"));
+    wrap.appendChild(h("h2", {}, "Evidence"));
+    wrap.appendChild(h("p", { class: "story" }, day.evidence));
+    if (day.n === 16) wrap.appendChild(h("p", {}, "Inside the box: wrapping paper, and a note that reads “Merry Christmas — B”."));
+    var row = h("div", { class: "row" });
+    row.appendChild(h("button", { class: "solid", type: "button", onclick: function () { go("notebook"); } }, "Open the notebook"));
+    row.appendChild(h("button", { class: "ghost", type: "button", style: "color:#241c16;border-color:#c9bba6", onclick: function () { go("calendar"); } }, "Back to the calendar"));
+    if (day.n < 24 && isUnlocked(day.n + 1, new Date())) {
+      row.appendChild(h("button", { class: "solid", type: "button", onclick: function () { go("day", day.n + 1); } }, "Open door " + (day.n + 1)));
+    }
+    if (day.n === 24) {
+      row.appendChild(h("button", { class: "solid", type: "button", onclick: function () { go("solved"); } }, "See the ending"));
+    }
+    wrap.appendChild(row);
+    return wrap;
+  }
+
+  function puzzleBlock(day) {
+    var wrap = h("div", { class: "puzzle" });
+    if (day.type === "scramble") wrap.appendChild(scrambleUI(day));
+    else if (day.type === "cipher") wrap.appendChild(cipherUI(day));
+    else if (day.type === "lock") wrap.appendChild(lockUI(day));
+    else if (day.type === "logic") wrap.appendChild(logicUI(day));
+    else if (day.type === "hidden") wrap.appendChild(hiddenUI(day));
+    else if (day.type === "timeline") wrap.appendChild(timelineUI(day));
+    else wrap.appendChild(finalUI(day));
+    var msg = h("p", { class: "msg" + (session.tone ? " " + session.tone : ""), "aria-live": "polite" }, session.message || "");
+    wrap.appendChild(msg);
+    if (!state.hints[String(day.n)]) {
+      wrap.appendChild(h("button", { class: "ghost", type: "button", style: "color:#241c16;border-color:#c9bba6;margin-top:8px", onclick: function () { useHint(day); } }, "Hint"));
+    } else {
+      wrap.appendChild(h("p", {}, "Hint: " + day.hint));
+    }
+    return wrap;
+  }
+
+  function useHint(day) {
+    markHint(day.n);
+    session.message = day.hint;
+    session.tone = "";
+    if (day.type === "hidden") session.glow = true;
+    render();
+  }
+
+  function succeed(day) {
+    if (session.timer) { clearTimeout(session.timer); session.timer = 0; }
+    solve(day.n);
+    session.just = true;
+    session.message = "";
+    if (day.n === 24) chimeWin();
+    else chimeOk();
+    if (day.n === 24) go("solved");
+    else render();
+  }
+
+  function fail(text) {
+    chimeBad();
+    session.message = text;
+    session.tone = "bad";
+    render();
+    var node = document.querySelector(".puzzle");
+    if (node) {
+      node.classList.add("nudge");
+      node.addEventListener("animationend", function () { node.classList.remove("nudge"); }, { once: true });
+    }
+  }
+
+  function scrambleUI(day) {
+    var box = h("div", {});
+    if (!session.order) session.order = day.puzzle.letters.slice();
+    var row = h("div", { class: "letters", "aria-hidden": "true" });
+    session.order.forEach(function (letter) { row.appendChild(h("span", { class: "chip" }, letter)); });
+    box.appendChild(row);
+    box.appendChild(h("p", {}, "Letters: " + session.order.join(", ")));
+    box.appendChild(h("label", { for: "answer" }, "Your word"));
+    var input = h("input", { id: "answer", type: "text", "data-autofocus": "true", autocomplete: "off", spellcheck: "false", value: session.typed });
+    input.addEventListener("input", function () { session.typed = input.value; });
+    input.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); checkScramble(day); } });
+    box.appendChild(input);
+    var actions = h("div", { class: "row" });
+    actions.appendChild(h("button", { class: "solid", type: "button", onclick: function () { checkScramble(day); } }, "Check"));
+    actions.appendChild(h("button", { class: "ghost", type: "button", style: "color:#241c16;border-color:#c9bba6", onclick: function () { session.order = shuffle(day.puzzle.letters); render(); } }, "Shuffle"));
+    box.appendChild(actions);
+    return box;
+  }
+  function checkScramble(day) {
+    if (grade(day, session.typed)) succeed(day);
+    else fail("That is not the word. Look at the letters again.");
+  }
+  function shuffle(list) {
+    var a = list.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  function cipherUI(day) {
+    var box = h("div", {});
+    box.appendChild(h("p", {}, "Coded message"));
+    var chips = h("div", { class: "letters" });
+    day.puzzle.cipher.split("").forEach(function (ch) {
+      if (ch === " ") { chips.appendChild(h("span", { style: "width:10px" }, "")); return; }
+      if (day.puzzle.kind === "atbash") {
+        chips.appendChild(h("button", { class: "chip", type: "button", onclick: function () { session.typed += atbash(ch); render(); } }, ch));
+      } else chips.appendChild(h("span", { class: "chip" }, ch));
+    });
+    box.appendChild(chips);
+    if (day.puzzle.kind === "caesar") {
+      var wheelLabel = h("label", { id: "wheel-label", for: "wheel" }, "Places turned back: " + session.shift);
+      box.appendChild(wheelLabel);
+      var range = h("input", { id: "wheel", type: "range", min: "0", max: "25", value: String(session.shift) });
+      var reading = h("p", { id: "reading" }, "Reading: " + caesarDecode(day.puzzle.cipher, session.shift));
+      range.addEventListener("input", function () {
+        session.shift = Number(range.value);
+        wheelLabel.textContent = "Places turned back: " + session.shift;
+        reading.textContent = "Reading: " + caesarDecode(day.puzzle.cipher, session.shift);
+      });
+      box.appendChild(range);
+      box.appendChild(reading);
+      box.appendChild(h("button", { class: "ghost", type: "button", style: "color:#241c16;border-color:#c9bba6", onclick: function () { session.typed = caesarDecode(day.puzzle.cipher, session.shift); render(); } }, "Use this reading"));
+    } else {
+      box.appendChild(alphabetChart());
+      box.appendChild(h("p", {}, "Activate each coded letter from left to right, or type the message yourself."));
+    }
+    box.appendChild(h("label", { for: "decoded" }, "Decoded message"));
+    var input = h("input", { id: "decoded", type: "text", "data-autofocus": "true", autocomplete: "off", spellcheck: "false", value: session.typed });
+    input.addEventListener("input", function () { session.typed = input.value; });
+    input.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); checkCipher(day); } });
+    box.appendChild(input);
+    var actions = h("div", { class: "row" });
+    actions.appendChild(h("button", { class: "solid", type: "button", onclick: function () { checkCipher(day); } }, "Check"));
+    actions.appendChild(h("button", { class: "ghost", type: "button", style: "color:#241c16;border-color:#c9bba6", onclick: function () { session.typed = ""; render(); } }, "Clear"));
+    box.appendChild(actions);
+    return box;
+  }
+  function alphabetChart() {
+    var top = "ABCDEFGHIJKLM";
+    var bot = "ZYXWVUTSRQPON";
+    var row = h("div", {});
+    row.appendChild(h("p", { class: "muted" }, "Atbash alphabet"));
+    row.appendChild(h("p", {}, top.split("").join(" ")));
+    row.appendChild(h("p", {}, bot.split("").join(" ")));
+    return row;
+  }
+  function checkCipher(day) {
+    if (grade(day, session.typed)) succeed(day);
+    else fail("That reading does not match the message yet.");
+  }
+
+  function lockUI(day) {
+    var box = h("div", {});
+    if (day.puzzle.showCard) {
+      box.appendChild(h("div", { class: "paper", style: "background:#fff;border:1px solid #c9bba6;max-width:16rem" }, [
+        h("p", { class: "kicker" }, "Pawn ticket"),
+        h("p", { style: "font-family:Palatino,Georgia,serif;font-size:2rem;margin:0" }, "2412")
+      ]));
+    }
+    box.appendChild(h("p", {}, "Enter four digits."));
+    var row = h("div", { class: "lockrow" });
+    for (var i = 0; i < 4; i++) row.appendChild(digitBox(i));
+    box.appendChild(row);
+    var keys = h("div", { class: "keys", role: "group", "aria-label": "Keypad" });
+    "1234567890".split("").forEach(function (d) {
+      keys.appendChild(h("button", { class: "key", type: "button", onclick: function () { pushDigit(d); } }, d));
+    });
+    keys.appendChild(h("button", { class: "key", type: "button", onclick: backDigit }, "Delete"));
+    box.appendChild(keys);
+    box.appendChild(h("button", { class: "solid", type: "button", onclick: function () { checkLock(day); } }, "Try the code"));
+    return box;
+  }
+  function digitBox(i) {
+    var input = h("input", { class: "digit", inputmode: "numeric", maxlength: "1", "aria-label": "Digit " + (i + 1), value: session.digits[i] });
+    if (i === 0) input.setAttribute("data-autofocus", "true");
+    input.addEventListener("input", function () {
+      var v = input.value.replace(/\D/g, "").slice(-1);
+      session.digits[i] = v;
+      input.value = v;
+      if (v && input.nextElementSibling) input.nextElementSibling.focus();
+    });
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Backspace" && !input.value && input.previousElementSibling) input.previousElementSibling.focus();
+      if (e.key === "Enter") checkLock(dayBy(session.n));
+    });
+    return input;
+  }
+  function pushDigit(d) {
+    for (var i = 0; i < 4; i++) {
+      if (!session.digits[i]) { session.digits[i] = d; break; }
+    }
+    render();
+  }
+  function backDigit() {
+    for (var i = 3; i >= 0; i--) {
+      if (session.digits[i]) { session.digits[i] = ""; break; }
+    }
+    render();
+  }
+  function checkLock(day) {
+    var code = session.digits.join("");
+    if (code.length < 4) { fail("Enter all four digits."); return; }
+    if (grade(day, code)) succeed(day);
+    else fail("The lock does not turn. Try another code.");
+  }
+
+  function logicUI(day) {
+    var box = h("div", { role: "group", "aria-label": "Choose one answer" });
+    day.puzzle.options.forEach(function (opt) {
+      box.appendChild(h("button", {
+        class: "choice", type: "button", "aria-pressed": session.picked === opt.id ? "true" : "false",
+        onclick: function () { session.picked = opt.id; render(); }
+      }, opt.text));
+    });
+    box.appendChild(h("button", { class: "solid", type: "button", onclick: function () { checkLogic(day); } }, "Check"));
+    return box;
+  }
+  function checkLogic(day) {
+    if (!session.picked) { fail("Choose one answer first."); return; }
+    if (grade(day, session.picked)) succeed(day);
+    else fail("That doesn't fit the evidence — try again.");
+  }
+
+  function hiddenUI(day) {
+    var box = h("div", {});
+    var scene = h("div", { class: "scene" });
+    scene.innerHTML = sceneArt(day.n);
+    hotspots(day).forEach(function (spot) {
+      var btn = h("button", {
+        class: "spot" + (session.glow && spot.id === day.puzzle.target ? " glow" : ""),
+        type: "button",
+        style: "left:" + spot.x + "%;top:" + spot.y + "%",
+        "aria-label": spot.label,
+        "data-hot": spot.id === day.puzzle.target ? "true" : "false",
+        onclick: function () { pickHidden(day, spot.id); }
+      }, spot.name);
+      scene.appendChild(btn);
+    });
+    box.appendChild(scene);
+    box.appendChild(h("p", {}, "Choose the object that matches the story. Tab to each spot and press Enter, or click it."));
+    if (!session.timer && !session.glow && !state.hints[String(day.n)]) {
+      session.timer = setTimeout(function () {
+        session.glow = true;
+        var el = document.querySelector("[data-hot='true']");
+        if (el) el.classList.add("glow");
+      }, 30000);
+    }
+    return box;
+  }
+  function pickHidden(day, id) {
+    if (grade(day, id)) succeed(day);
+    else {
+      session.message = "Not that one.";
+      session.tone = "bad";
+      chimeBad();
+      var scene = document.querySelector(".scene");
+      if (scene) {
+        scene.classList.add("nudge");
+        scene.addEventListener("animationend", function () { scene.classList.remove("nudge"); }, { once: true });
+      }
+      var msg = document.querySelector(".msg");
+      if (msg) { msg.textContent = session.message; msg.className = "msg bad"; }
+    }
+  }
+  function hotspots(day) {
+    if (day.n === 9) return [
+      { id: "window", x: 24, y: 28, name: "Window", label: "Study window, latched" },
+      { id: "lamp", x: 78, y: 24, name: "Lamp", label: "Garden lantern" },
+      { id: "print", x: 28, y: 58, name: "Footprint", label: "A single boot print in the mud by the window" },
+      { id: "bush", x: 72, y: 52, name: "Bush", label: "Holly bush" },
+      { id: "pot", x: 14, y: 84, name: "Pot", label: "Flower pot" },
+      { id: "path", x: 48, y: 84, name: "Path", label: "Garden path" },
+      { id: "gate", x: 84, y: 82, name: "Gate", label: "Garden gate" }
+    ];
+    if (day.n === 13) return [
+      { id: "stud", x: 16, y: 24, name: "Stud", label: "Corner stud" },
+      { id: "lid", x: 50, y: 20, name: "Lid", label: "Velvet lid" },
+      { id: "ribbon", x: 22, y: 46, name: "Ribbon", label: "Silk ribbon" },
+      { id: "clasp", x: 74, y: 44, name: "Clasp", label: "Smooth clasp" },
+      { id: "scratches", x: 46, y: 62, name: "Scratches", label: "Pale scratch marks on the lock" },
+      { id: "lining", x: 82, y: 74, name: "Lining", label: "Cream lining" },
+      { id: "keyhole", x: 46, y: 86, name: "Keyhole", label: "Keyhole" }
+    ];
+    return [
+      { id: "six", x: 20, y: 38, name: "6", label: "Size 6 boots, clean" },
+      { id: "eight", x: 50, y: 36, name: "8", label: "Size 8 boots, clean" },
+      { id: "nine", x: 80, y: 38, name: "9", label: "Size 9 boots, clean" },
+      { id: "seven", x: 34, y: 74, name: "7", label: "Size 7 boots, clean" },
+      { id: "ten", x: 68, y: 74, name: "10 mud", label: "Size 10 boots with mud on the toes" }
+    ];
+  }
+  function bootPair(x, y, fill) {
+    return '<path fill="' + fill + '" d="M' + (x - 36) + ' ' + y + ' h22 v34 h18 v18 h-40 z M' + (x + 2) + ' ' + y + ' h22 v34 h18 v18 h-40 z"/>';
+  }
+  function sceneArt(n) {
+    if (n === 9) return '<svg viewBox="0 0 640 360" aria-hidden="true"><rect width="640" height="360" fill="#c5d7e2"/><rect y="210" width="640" height="150" fill="#8aa06a"/><rect x="70" y="70" width="160" height="150" fill="#6d4c33"/><rect x="92" y="92" width="116" height="80" fill="#d7ecee"/><path d="M40 250 C80 230 120 270 160 250" fill="none" stroke="#6b4a32" stroke-width="10"/><ellipse cx="190" cy="230" rx="18" ry="8" fill="#5c4632"/><circle cx="500" cy="150" r="16" fill="#d4b56a"/><rect x="494" y="166" width="12" height="50" fill="#6d4c33"/><circle cx="450" cy="230" r="36" fill="#1f4d32"/><rect x="560" y="180" width="14" height="70" fill="#6d4c33"/></svg>';
+    if (n === 13) return '<svg viewBox="0 0 640 360" aria-hidden="true"><rect width="640" height="360" fill="#2a211c"/><rect x="150" y="50" width="340" height="250" rx="16" fill="#6d2430"/><rect x="175" y="78" width="290" height="190" rx="8" fill="#f3e6d0"/><rect x="250" y="150" width="140" height="70" rx="8" fill="#c9a46a"/><path d="M270 175 l18 8 m10-12 l16 14 m8-16 l20 10" stroke="#f6f1e6" stroke-width="3" fill="none"/><circle cx="320" cy="230" r="8" fill="#241c16"/><path d="M200 110 h40" stroke="#d4b56a" stroke-width="6"/></svg>';
+    return '<svg viewBox="0 0 640 360" aria-hidden="true"><rect width="640" height="360" fill="#efe4d4"/><rect y="168" width="640" height="192" fill="#c4a882"/><rect y="160" width="640" height="12" fill="#6d4c33"/>' +
+      bootPair(128, 108, "#8d6a45") + bootPair(320, 102, "#8d6a45") + bootPair(512, 108, "#8d6a45") +
+      bootPair(218, 240, "#8d6a45") + bootPair(435, 240, "#4a3424") +
+      '<ellipse cx="430" cy="308" rx="18" ry="6" fill="#5c4632"/><ellipse cx="458" cy="310" rx="18" ry="6" fill="#5c4632"/></svg>';
+  }
+
+  function timelineUI(day) {
+    var box = h("div", {});
+    box.appendChild(h("p", {}, "Place every event. Activate a card to put it in the next open step. Activate a placed card to take it back."));
+    var slots = h("div", { class: "slots" });
+    day.puzzle.answer.forEach(function (_, index) {
+      var id = session.placed[index];
+      var card = id ? cardText(day, id) : "Empty step";
+      var mark = "";
+      var cls = "card-btn";
+      if (session.marks) {
+        var ok = session.marks[index];
+        cls += ok ? " in-place" : " out";
+        mark = ok ? "In place" : "Out of place";
+      }
+      slots.appendChild(h("button", {
+        class: cls, type: "button",
+        onclick: function () { removeAt(index); }
+      }, [h("span", {}, "Step " + (index + 1) + ". " + card), mark ? h("small", {}, mark) : null]));
+    });
+    box.appendChild(slots);
+    var pool = h("div", { class: "card-pool" });
+    day.puzzle.cards.forEach(function (card) {
+      if (session.placed.indexOf(card.id) !== -1) return;
+      pool.appendChild(h("button", {
+        class: "card-btn", type: "button",
+        onclick: function () { placeCard(day, card.id); }
+      }, card.text));
+    });
+    box.appendChild(pool);
+    box.appendChild(h("button", { class: "solid", type: "button", onclick: function () { checkTimeline(day); } }, "Check the order"));
+    return box;
+  }
+  function cardText(day, id) {
+    var cards = day.puzzle.cards;
+    for (var i = 0; i < cards.length; i++) if (cards[i].id === id) return cards[i].text;
+    return "";
+  }
+  function placeCard(day, id) {
+    if (session.placed.length >= day.puzzle.answer.length) return;
+    if (session.placed.indexOf(id) !== -1) return;
+    session.placed.push(id);
+    session.marks = null;
+    render();
+  }
+  function removeAt(index) {
+    if (!session.placed[index]) return;
+    session.placed.splice(index, 1);
+    session.marks = null;
+    render();
+  }
+  function checkTimeline(day) {
+    if (session.placed.length < day.puzzle.answer.length) { fail("Place every event first."); return; }
+    if (grade(day, session.placed)) succeed(day);
+    else {
+      session.marks = session.placed.map(function (id, i) { return id === day.puzzle.answer[i]; });
+      fail("Some of these are out of place.");
+    }
+  }
+
+  function finalUI(day) {
+    var box = h("div", {});
+    box.appendChild(question("Who took the star?", "who", [
+      ["margaret", "Margaret"],
+      ["bernard", "Bernard"],
+      ["felix", "Felix"],
+      ["rose", "Rose"],
+      ["clara", "Clara"]
+    ]));
+    box.appendChild(question("Why?", "why", [
+      ["museum", "The star belongs in a museum"],
+      ["debts", "His debts — he needed the money"],
+      ["trick", "A magic trick that went too far"],
+      ["protect", "To protect someone else"],
+      ["none", "There was no reason to take it"]
+    ]));
+    box.appendChild(question("Where is the star hidden?", "where", [
+      ["fire", "In the fireplace"],
+      ["coat", "In Bernard's coat"],
+      ["box", "In the gift box under the Christmas tree"],
+      ["boots", "In the boot room"],
+      ["desk", "In Rose's writing desk"]
+    ]));
+    box.appendChild(h("button", { class: "solid", type: "button", onclick: function () { checkFinal(day); } }, "Make the accusation"));
+    return box;
+  }
+  function question(title, key, options) {
+    var group = h("fieldset", { style: "border:0;padding:0;margin:12px 0" });
+    group.appendChild(h("legend", { style: "font-family:Palatino,Georgia,serif;font-size:1.3rem" }, title));
+    options.forEach(function (opt) {
+      group.appendChild(h("button", {
+        class: "choice", type: "button", "aria-pressed": session[key] === opt[0] ? "true" : "false",
+        onclick: function () { session[key] = opt[0]; render(); }
+      }, opt[1]));
+    });
+    return group;
+  }
+  function checkFinal(day) {
+    if (!session.who || !session.why || !session.where) { fail("Answer all three questions."); return; }
+    if (session.who === "bernard" && session.why === "debts" && session.where === "box") succeed(day);
+    else fail("The evidence doesn't add up — check your notebook.");
+  }
+
+  function screenNotebook() {
+    var data = collected();
+    var box = h("section", { class: "paper notebook" });
+    box.appendChild(h("h1", {}, "Detective notebook"));
+    if (!session.tab) session.tab = "suspects";
+    var tabs = h("div", { class: "tabs", role: "tablist" });
+    ["suspects", "evidence", "timeline"].forEach(function (id) {
+      var label = id.charAt(0).toUpperCase() + id.slice(1);
+      tabs.appendChild(h("button", {
+        class: "ghost", type: "button", role: "tab", style: "color:#241c16;border-color:#c9bba6",
+        "aria-selected": session.tab === id ? "true" : "false",
+        onclick: function () { session.tab = id; render(); }
+      }, label));
+    });
+    box.appendChild(tabs);
+    if (session.tab === "suspects") box.appendChild(suspectTab(data));
+    else if (session.tab === "evidence") box.appendChild(evidenceTab(data));
+    else box.appendChild(timeTab(data));
+    return box;
+  }
+  function suspectTab(data) {
+    var wrap = h("div", {});
+    var any = false;
+    SUSPECTS.forEach(function (s) {
+      if (!data.intro[s.id]) return;
+      any = true;
+      var f = data.fields[s.id];
+      var card = h("article", { class: "suspect" });
+      card.appendChild(h("h3", {}, s.name + ", " + s.age));
+      card.appendChild(h("p", {}, s.role));
+      card.appendChild(fieldLine("Motive", f.motive, true));
+      card.appendChild(fieldLine("Alibi", f.alibi, true));
+      card.appendChild(fieldLine("Secret", f.secret, false));
+      if (f.note.length) card.appendChild(fieldLine("Notes", f.note, false));
+      wrap.appendChild(card);
+    });
+    if (!any) wrap.appendChild(h("p", {}, "Not found yet. Meet the household on door 3."));
+    return wrap;
+  }
+  function fieldLine(label, lines, latest) {
+    var text = "Not found yet";
+    if (lines.length) text = latest ? lines[lines.length - 1] : lines.join(" ");
+    var p = h("p", {});
+    p.appendChild(h("strong", {}, label + ": "));
+    p.appendChild(document.createTextNode(text));
+    return p;
+  }
+  function evidenceTab(data) {
+    var wrap = h("div", {});
+    if (!data.evidence.length) {
+      wrap.appendChild(h("p", {}, "Not found yet. Solve a door and the clue will wait here."));
+      return wrap;
+    }
+    data.evidence.forEach(function (item) {
+      wrap.appendChild(h("article", { class: "clue" }, [
+        h("h3", {}, "Door " + item.n + " — " + item.title),
+        h("p", {}, item.text)
+      ]));
+    });
+    return wrap;
+  }
+  function timeTab(data) {
+    var wrap = h("div", {});
+    if (!data.timeline.length) {
+      wrap.appendChild(h("p", {}, "Not found yet. The evening will fill in as you open doors."));
+      return wrap;
+    }
+    data.timeline.forEach(function (item) {
+      wrap.appendChild(h("article", { class: "when" }, [
+        h("h3", {}, item.when),
+        h("p", {}, item.text)
+      ]));
+    });
+    return wrap;
+  }
+
+  function screenSolved() {
+    var box = h("section", { class: "paper" });
+    if (!state.finishedAt) {
+      box.appendChild(h("h1", {}, "The ending is still shut"));
+      box.appendChild(h("p", { class: "story" }, "Name the culprit, the motive, and the hiding place on door 24."));
+      box.appendChild(h("button", { class: "solid", type: "button", onclick: function () { go("calendar"); } }, "Back to the calendar"));
+      return box;
+    }
+    box.appendChild(h("p", { class: "stamp" }, "Case solved"));
+    box.appendChild(h("h1", {}, "The star goes back on the tree"));
+    box.appendChild(h("p", { class: "story" }, "Bernard bows his head. He took Felix's picks, opened the study lock, and hid the star in the taped gift box, meaning to sell it after Christmas. The debts were real. Edwin listens, and then he forgives him. The star goes back on the tree. This Christmas, it shines a little brighter."));
+    var hints = Object.keys(state.hints).length;
+    box.appendChild(h("p", {}, "Days solved: " + solvedCount()));
+    box.appendChild(h("p", {}, "Hints used: " + hints));
+    box.appendChild(h("p", {}, "Days taken: " + daysTaken()));
+    var share = "I solved The Case of the Missing Christmas Star. Days solved: " + solvedCount() + ". Hints used: " + hints + ". Days taken: " + daysTaken() + ".";
+    box.appendChild(h("label", { for: "share" }, "Share your result"));
+    var area = h("textarea", { id: "share", readonly: "true" }, share);
+    box.appendChild(area);
+    var row = h("div", { class: "row" });
+    row.appendChild(h("button", { class: "solid", type: "button", onclick: function () { copyShare(area); } }, "Copy result"));
+    row.appendChild(h("button", { class: "ghost", type: "button", style: "color:#241c16;border-color:#c9bba6", onclick: askReset }, "Play again"));
+    box.appendChild(row);
+    box.appendChild(h("p", { id: "copy-msg", "aria-live": "polite" }, ""));
+    return box;
+  }
+  function copyShare(area) {
+    area.focus();
+    area.select();
+    var msg = document.getElementById("copy-msg");
+    function done(ok) { if (msg) msg.textContent = ok ? "Copied." : "The result is selected. Copy it from the box."; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(area.value).then(function () { done(true); }, function () { done(false); });
+    } else done(false);
+  }
+
+  function screenModal() {
+    var dlg = h("dialog", {});
+    var inner = h("div", { class: "inner" });
+    if (modal === "reset") {
+      inner.appendChild(h("h2", {}, "Are you sure?"));
+      inner.appendChild(h("p", {}, "This clears every clue and starts the case again."));
+      var row = h("div", { class: "row" });
+      row.appendChild(h("button", { class: "solid", type: "button", onclick: function () {
+        if (session.timer) clearTimeout(session.timer);
+        state = defaultState();
+        save();
+        session = blankSession(0);
+        modal = null;
+        go("home");
+      } }, "Clear the case"));
+      row.appendChild(h("button", { class: "ghost", type: "button", style: "color:#241c16;border-color:#c9bba6", onclick: function () { modal = null; render(); } }, "Keep playing"));
+      inner.appendChild(row);
+    } else {
+      inner.appendChild(h("h2", {}, "Settings"));
+      inner.appendChild(h("p", {}, "Sound is " + (state.sound ? "on" : "off") + "."));
+      inner.appendChild(h("button", { class: "solid", type: "button", onclick: function () { state.sound = !state.sound; save(); render(); } }, state.sound ? "Mute sound" : "Turn sound on"));
+      inner.appendChild(h("p", {}, "Mode is " + (state.mode === "binge" ? "Binge" : "Advent") + ". Switching to Advent closes doors whose December date has not arrived, except doors you have already solved."));
+      var row2 = h("div", { class: "row" });
+      row2.appendChild(h("button", { class: "ghost", type: "button", style: "color:#241c16;border-color:#c9bba6", onclick: function () { state.mode = "advent"; save(); modal = null; render(); } }, "Advent mode"));
+      row2.appendChild(h("button", { class: "ghost", type: "button", style: "color:#241c16;border-color:#c9bba6", onclick: function () { state.mode = "binge"; save(); modal = null; render(); } }, "Binge mode"));
+      inner.appendChild(row2);
+      inner.appendChild(h("div", { class: "row" }, [
+        h("button", { class: "solid", type: "button", onclick: askReset }, "Reset progress"),
+        h("button", { class: "ghost", type: "button", style: "color:#241c16;border-color:#c9bba6", onclick: function () { modal = null; render(); } }, "Close")
+      ]));
+    }
+    dlg.appendChild(inner);
+    dlg.addEventListener("cancel", function (e) { e.preventDefault(); if (modal !== "reset") { modal = null; render(); } });
+    return dlg;
+  }
+
+  function selfTest() {
+    var lines = [];
+    function ok(name, cond) { lines.push((cond ? "PASS " : "FAIL ") + name); }
+    function bag(s) { return String(s).toUpperCase().replace(/[^A-Z]/g, "").split("").sort().join(""); }
+    ok("24 days", DAYS.length === 24 && DAYS.every(function (d, i) { return d.n === i + 1; }));
+    ok("caesar 4", caesarDecode(dayBy(4).puzzle.cipher, 3) === "THE STAR BELONGS IN A MUSEUM");
+    ok("caesar 14", caesarDecode(dayBy(14).puzzle.cipher, 3) === "LOOK UNDER THE TREE");
+    ok("atbash 8", atbash(dayBy(8).puzzle.cipher) === "HE OWES MONEY");
+    ok("atbash 19", atbash(dayBy(19).puzzle.cipher) === "GOLD WATCH SOLD");
+    [1, 6, 15, 22].forEach(function (n) {
+      var d = dayBy(n);
+      ok("scramble " + n, bag(d.puzzle.letters.join("")) === bag(d.puzzle.answer));
+    });
+    ok("lock 5", dayBy(5).puzzle.code === "1976");
+    ok("lock 10", dayBy(10).puzzle.code === "2412");
+    ok("lock 16", dayBy(16).puzzle.code === "2405");
+    ok("logic answers", [3, 7, 12, 17, 21].every(function (n) {
+      var d = dayBy(n);
+      return d.puzzle.options.some(function (o) { return o.id === d.puzzle.answer; });
+    }));
+    ok("timelines", [2, 11, 20, 23].every(function (n) {
+      var d = dayBy(n);
+      return d.puzzle.answer.length === d.puzzle.cards.length;
+    }));
+    ok("grades", grade(dayBy(1), "STAR") && grade(dayBy(2), ["b", "d", "c", "a"]) && grade(dayBy(5), "1976") && !grade(dayBy(5), "1977"));
+    DAYS.forEach(function (d) {
+      if (d.type === "scramble" || d.type === "cipher" || d.type === "logic") ok("solve " + d.n, grade(d, d.puzzle.answer));
+      else if (d.type === "lock") ok("solve " + d.n, grade(d, d.puzzle.code));
+      else if (d.type === "hidden") ok("solve " + d.n, grade(d, d.puzzle.target));
+      else if (d.type === "timeline") ok("solve " + d.n, grade(d, d.puzzle.answer.slice()));
+      else ok("final door", d.n === 24);
+    });
+    var nov = new Date(2026, 10, 21);
+    var dec1 = new Date(2026, 11, 1);
+    var dec5 = new Date(2026, 11, 5);
+    var dec26 = new Date(2026, 11, 26);
+    var jan = new Date(2027, 0, 3);
+    ok("nov locked", !dateAllows(1, nov));
+    ok("dec 1", dateAllows(1, dec1) && !dateAllows(2, dec1));
+    ok("dec 5", dateAllows(5, dec5) && !dateAllows(6, dec5));
+    ok("after christmas", dateAllows(24, dec26) && dateAllows(1, dec26));
+    ok("january", !dateAllows(1, jan));
+    var prev = state;
+    state = defaultState();
+    state.mode = "binge";
+    ok("binge door 1", isUnlocked(1, nov) && !isUnlocked(2, nov));
+    state.solved["5"] = { at: "2026-11-21T00:00:00" };
+    ok("binge after 5", isUnlocked(1, nov) && isUnlocked(6, nov) && !isUnlocked(7, nov));
+    state.mode = "advent";
+    ok("solved stays open", isUnlocked(5, nov));
+    ok("advent relock", !isUnlocked(6, nov));
+    state = prev;
+    try {
+      state = defaultState();
+      state.mode = "binge";
+      state.sound = false;
+      save();
+      DAYS.forEach(function (day) {
+        session = blankSession(day.n);
+        if (day.type === "scramble") { session.typed = day.puzzle.answer; checkScramble(day); }
+        else if (day.type === "cipher") { session.typed = day.puzzle.answer; checkCipher(day); }
+        else if (day.type === "lock") { session.digits = day.puzzle.code.split(""); checkLock(day); }
+        else if (day.type === "logic") { session.picked = day.puzzle.answer; checkLogic(day); }
+        else if (day.type === "hidden") pickHidden(day, day.puzzle.target);
+        else if (day.type === "timeline") { session.placed = day.puzzle.answer.slice(); checkTimeline(day); }
+        else { session.who = "bernard"; session.why = "debts"; session.where = "box"; checkFinal(day); }
+      });
+      ok("playthrough", solvedCount() === 24 && !!state.finishedAt);
+      go("notebook");
+      session.tab = "suspects";
+      render();
+      var book = document.body.textContent;
+      ok("notebook has Bernard", book.indexOf("Bernard Harrington") !== -1 && book.indexOf("None for 8:15") !== -1);
+      ok("notebook clears Margaret", book.indexOf("In the kitchen with Clara") !== -1);
+    } catch (err) {
+      ok("playthrough crashed " + (err && err.message), false);
+    }
+    state = defaultState();
+    save();
+    session = blankSession(0);
+    modal = null;
+    if (location.hash !== "#selftest") location.hash = "#selftest";
+    var log = document.getElementById("testlog");
+    log.hidden = false;
+    log.textContent = lines.join("\n");
+    log.style.whiteSpace = "pre-wrap";
+    log.style.background = lines.some(function (l) { return l.indexOf("FAIL") === 0; }) ? "#8d2c38" : "#214536";
+    log.style.padding = "12px";
+  }
+
+  window.addEventListener("hashchange", render);
+  if (location.hash === "#selftest") selfTest();
+  render();
+})();
+</script>
+</body>
+</html>
